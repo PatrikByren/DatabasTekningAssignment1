@@ -5,12 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProductAppWpf"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="MainWindow" Height="450" Width="500">
     <Grid>
-        <StackPanel Margin="50 20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+            <Button Name="btn_productPage" Content="Create Product" FontSize="6" Click="btn_productPage_Click" Margin="0 10 0 5"/>
+            <Button Name="btn_customerPage" Content="Create Customer" FontSize="6" Click="btn_customerPage_Click"/>
+            <Button Name="btn_orderPage" Content="Create Order" FontSize="6" Click="btn_orderPage_Click" Margin="0 30"/>
+        </StackPanel>
+        <Frame Name="MainFrame" Grid.Column="1" NavigationUIVisibility="Hidden"/>
+        <!--<StackPanel Margin="50 20">
             <TextBlock Text="Name of new customer" Margin="20 0"/>
             <TextBox  x:Name="tb_customerName" Margin="20 0 20 0"/>
-            <Button x:Name="btn_createNewCostumer" Content="Create costumer" Margin="20 10"/>
+            <Button x:Name="btn_createNewCostumer" Click="btn_createNewCostumer_Click" Content="Create costumer" Margin="20 10"/>
             <TextBlock Text="Name of new product" Margin="20 0"/>
             <TextBox x:Name="tb_productName" Margin="20 0 20 0"/>
             <TextBlock Text="Price of the new product" Margin="20 0"/>
@@ -41,6 +52,6 @@
             <TextBlock Text="Customers" Margin="20 0"/>
             <ComboBox Name="cb_customer" DisplayMemberPath="Value" Margin="20 0 20 10"/>
             <Button x:Name="btn_makeOrder" Content="Make Order" Margin="20 10"/>
-        </StackPanel>
+        </StackPanel>-->
     </Grid>
 </Window>

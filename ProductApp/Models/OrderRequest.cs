@@ -1,4 +1,5 @@
 ﻿using ProductApp.Models.Entities;
+using System.Collections.ObjectModel;
 
 namespace ProductApp.Models
 {
@@ -7,6 +8,6 @@ namespace ProductApp.Models
         public decimal TotalPrice { get; set; }
         public string CustomerName { get; set; } = null!;
         public int CustomersId { get; set; }
-        public ICollection<ProductEntity> Products { get; set; }
+        public ObservableCollection<ProductEntity> Products { get; set; }
     }
 }

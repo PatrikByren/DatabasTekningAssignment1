@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ProductApp.Models;
+using ProductApp.Services;
+using ProductAppWpf.Pages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +23,26 @@ namespace ProductAppWpf
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
+            MainFrame.Content = new OrderPage();
+        }
+
+        private void btn_productPage_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Content = new ProductPage();
+        }
+
+        private void btn_customerPage_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Content = new CustomerPage();
+        }
+
+        private void btn_orderPage_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Content = new OrderPage();
         }
     }
 }

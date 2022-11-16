@@ -8,5 +8,6 @@ namespace ProductAppWpf.Models
 {
     internal class CustomerRequest
     {
+        public string Name { get; set; } = null!;
     }
 }
