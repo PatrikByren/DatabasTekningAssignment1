@@ -25,6 +25,7 @@ namespace ProductApp.Controllers
             {
                 var productEntity = new ProductEntity()
                 {
+                    Id = Guid.NewGuid(),
                     Name = req.Name,
                     Price = req.Price
                 };
@@ -63,7 +64,7 @@ namespace ProductApp.Controllers
             return productModel;
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetOneProductAsync(int id)
+        public async Task<ActionResult> GetOneProductAsync(Guid id)
         {
             try
             {
@@ -86,8 +87,8 @@ namespace ProductApp.Controllers
         {
             try
             {
-                if (id != productModel.Id)
-                    return new BadRequestResult();
+                //if (id != productModel.Id)
+                //    return new BadRequestResult();
 
                 var productEntity = await _context.Products.FindAsync(id);
                 if (productEntity != null)

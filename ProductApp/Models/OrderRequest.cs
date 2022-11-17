@@ -8,6 +8,6 @@ namespace ProductApp.Models
         public decimal TotalPrice { get; set; }
         public string CustomerName { get; set; } = null!;
         public int CustomersId { get; set; }
-        public ObservableCollection<ProductEntity> Products { get; set; }
+        public ICollection<ProductModel> Products { get; set; }
     }
 }

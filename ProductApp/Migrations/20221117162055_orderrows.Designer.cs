@@ -12,8 +12,8 @@ using ProductApp.Context;
 namespace ProductApp.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221116064146_init")]
-    partial class init
+    [Migration("20221117162055_orderrows")]
+    partial class orderrows
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,8 +30,8 @@ namespace ProductApp.Migrations
                     b.Property<int>("OrdersId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductsId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("OrdersId", "ProductsId");
 
@@ -79,7 +79,7 @@ namespace ProductApp.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("money");
 
                     b.HasKey("Id");
 
@@ -88,7 +88,7 @@ namespace ProductApp.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("ProductApp.Models.Entities.ProductEntity", b =>
+            modelBuilder.Entity("ProductApp.Models.Entities.OrderRowsEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -96,12 +96,33 @@ namespace ProductApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderRows");
+                });
+
+            modelBuilder.Entity("ProductApp.Models.Entities.ProductEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("money");
 
                     b.HasKey("Id");
 
@@ -132,6 +153,25 @@ namespace ProductApp.Migrations
                         .IsRequired();
 
                     b.Navigation("Customers");
+                });
+
+            modelBuilder.Entity("ProductApp.Models.Entities.OrderRowsEntity", b =>
+                {
+                    b.HasOne("ProductApp.Models.Entities.OrderEntity", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProductApp.Models.Entities.ProductEntity", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ProductApp.Models.Entities.CustomerEntity", b =>

@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using ProductApp.Context;
 using ProductApp.Models;
 using ProductApp.Models.Entities;
-using ProductApp.Services;
 using System.Diagnostics;
 
 namespace ProductApp.Controllers
@@ -33,19 +32,57 @@ namespace ProductApp.Controllers
                 _context.Customers.Add(customerEntity);
                 await _context.SaveChangesAsync();
 
-                return new OkObjectResult(new ProductEntity
+                return new OkResult();
+                //    (new CustomerEntity
+                //{
+                //    Id = customerEntity.Id,
+                //    Name = customerEntity.Name,
+                //});
+            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
+            return new BadRequestResult();
+        }
+        [HttpGet]
+        public async Task<IEnumerable<CustomerModel>> GetAllCustomerAsync()
+        {
+            var customerModel = new List<CustomerModel>();
+
+            try
+            {
+                foreach (var item in await _context.Customers.ToListAsync())
+                    customerModel.Add(new CustomerModel
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                    });
+
+                return customerModel;
+            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
+            return customerModel;
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetOneCustomerAsync(int id)
+        {
+            try
+            {
+                var customerModel = await _context.Customers.FindAsync(id);
+                if (customerModel == null)
+                    return new NotFoundResult();
+
+                return new OkObjectResult(new CustomerModel
                 {
-                    Id = customerEntity.Id,
-                    Name = customerEntity.Name,
+                    Id = customerModel.Id,
+                    Name = customerModel.Name,
                 });
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
             return new BadRequestResult();
         }
-        //    [HttpGet]
+        //[HttpGet]
         //public async Task<ActionResult> GetAllCustomersAsync()
         //{
-        //    //return new OkObjectResult(await _customerService.GetAllCustomersAsync());
+        //    return new OkObjectResult(await _customerService.GetAllCustomersAsync());
         //}
         //[HttpGet("{id}")]
         //public async Task<ActionResult> GetOneCustomerAsync(int id)

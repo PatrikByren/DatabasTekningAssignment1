@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ProductApp.Models;
 using ProductApp.Models.Entities;
 using System;
@@ -30,7 +31,8 @@ namespace ProductAppWpf.Pages
     public partial class OrderPage : Page
     {
         private ObservableCollection<ProductModel> _productModel = new();
-        private ObservableCollection<ProductEntity> _productEntity = new();
+        private ObservableCollection<ProductModel> _productEntity = new();
+
         public OrderPage()
         {
             InitializeComponent();
@@ -39,24 +41,24 @@ namespace ProductAppWpf.Pages
 
         public async Task PopulateProductCombobox()
         {
-            var collection = new ObservableCollection<KeyValuePair<int, string>>();
+            var collection = new ObservableCollection<KeyValuePair<Guid, string>>();
             using var client = new HttpClient();
 
             foreach (var item in await client.GetFromJsonAsync<IEnumerable<ProductModel>>("https://localhost:7040/api/products"))
-                collection.Add(new KeyValuePair<int, string>(item.Id, item.Name));
+                collection.Add(new KeyValuePair<Guid, string>(item.Id, item.Name));
 
             cb_product.ItemsSource = collection;
             await PopulateCustomerCombobox().ConfigureAwait(false);
         }
         public async Task PopulateCustomerCombobox()
         {
-            var collection = new ObservableCollection<KeyValuePair<int, string>>();
+            var c_collection = new ObservableCollection<KeyValuePair<int, string>>();
             using var client = new HttpClient();
 
-            foreach (var item in await client.GetFromJsonAsync<IEnumerable<CustomerModel>>("https://localhost:7040/api/customers"))
-                collection.Add(new KeyValuePair<int, string>(item.Id, item.Name));
+            foreach (var c in await client.GetFromJsonAsync<IEnumerable<CustomerModel>>("https://localhost:7040/api/Customer"))
+                c_collection.Add(new KeyValuePair<int, string>(c.Id, c.Name));
 
-            cb_product.ItemsSource = collection;
+            cb_customer.ItemsSource = c_collection;
              
         }
 
@@ -64,13 +66,13 @@ namespace ProductAppWpf.Pages
         {
             try
             {
-                var product = (KeyValuePair<int, string>)cb_product.SelectedItem;
+                var product = (KeyValuePair<Guid, string>)cb_product.SelectedItem;
                 var productId = product.Key;
                 var productValue = product.Value;
                 _productModel.Add(new ProductModel { Id = productId, Name = productValue });
-                MessageBox.Show("Product added to chart");
                 cb_product.SelectedItem = null!;
                 lvProducts.ItemsSource = _productModel;
+
             }
             catch { MessageBox.Show("No products choosen in chart"); }
 
@@ -81,30 +83,43 @@ namespace ProductAppWpf.Pages
             {
                 try
                 {
+                    ICollection<ProductModel> productEntities = lvProducts.ItemsSource as ICollection<ProductModel>;
                     decimal totalPrice = 0;
                     var customer = (KeyValuePair<int, string>)cb_customer.SelectedItem;
                     var customerId = customer.Key;
                     using var client = new HttpClient();
 
-                    //foreach (var item in _productModel) 
-                    ////{
-                    ////  _productEntity.Add(await client.GetFromJsonAsync("https://localhost:7040/api/products", item.Id));
-                    ////}
+                    foreach (var item in _productModel)
+                    {
+                        _productEntity.Add(await client.GetFromJsonAsync<ProductModel>($"https://localhost:7040/api/products/{item.Id}"));
+                    }
                     foreach (var item in _productEntity)
                     {
                         totalPrice += item.Price;
                     }
-                    var result = await client.PostAsJsonAsync("https://localhost:7040/api/products", new OrderRequest
+
+
+                    var order = new OrderRequest
                     {
                         CustomersId = customer.Key,
                         CustomerName = customer.Value,
-                        Products = _productEntity,
-                        TotalPrice = totalPrice                        
-                    });
+                        Products = productEntities,
+                        TotalPrice = totalPrice
+                    };
+                    var json = JsonConvert.SerializeObject(order);
+
+                    var result = await client.PostAsJsonAsync("https://localhost:7040/api/Order", order);
                     if (result is OkResult)
                     {
                         cb_customer.SelectedItem = null!;
                         cb_product.SelectedItem = null!;
+                        //MessageBox.Show("Saved");
+                    }
+                    else
+                    {
+                        cb_customer.SelectedItem = null!;
+                        cb_product.SelectedItem = null!;
+                        //MessageBox.Show("Not Saved");
                     }
                 }
                 catch (Exception ex) { Debug.WriteLine(ex.Message); MessageBox.Show("Error!"); }

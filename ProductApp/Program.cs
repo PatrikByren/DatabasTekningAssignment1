@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProductApp.Context;
-using ProductApp.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("Sql")));
-builder.Services.AddScoped<CustomerService>();
+//builder.Services.AddScoped<CustomerService>();
 
 var app = builder.Build();
 
@@ -22,6 +22,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

@@ -6,6 +6,8 @@ using ProductApp.Models.Entities;
 using ProductApp.Models;
 using System.Diagnostics;
 using Microsoft.VisualBasic;
+using System.Collections.ObjectModel;
+
 
 namespace ProductApp.Controllers
 {
@@ -24,27 +26,30 @@ namespace ProductApp.Controllers
         {
             try
             {
+
                 var orderEntity = new OrderEntity()
                 {
                     TotalPrice = req.TotalPrice,
                     CustomerName = req.CustomerName,
                     CustomersId = req.CustomersId,
-                    Products = req.Products,
                     OrderDate = DateTime.Now,
                     DueDate = DateTime.Now.AddDays(10)
                 };
 
                 _context.Orders.Add(orderEntity);
                 await _context.SaveChangesAsync();
-
-                return new OkObjectResult(new OrderEntity
+                
+                foreach(var product in req.Products) 
                 {
-                    Id = orderEntity.Id,
-                    TotalPrice = orderEntity.TotalPrice,
-                    CustomerName = orderEntity.CustomerName,
-                    CustomersId = orderEntity.CustomersId,
-                    Products = orderEntity.Products
-                });
+                    _context.OrderRows.Add(new OrderRowsEntity
+                    {
+                        OrderId = orderEntity.Id,
+                        ProductId = product.Id
+                    });
+                }
+                await _context.SaveChangesAsync();
+
+                return new OkResult();
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
             return new BadRequestResult();

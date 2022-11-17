@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProductApp.Models.Entities
@@ -12,7 +13,7 @@ namespace ProductApp.Models.Entities
         public decimal TotalPrice { get; set; }
         public string CustomerName { get; set; } = null!;
         public int CustomersId { get; set; }
-        public ICollection<ProductEntity> Products { get; set; }
+
         public CustomerEntity Customers { get; set; }
 
     }

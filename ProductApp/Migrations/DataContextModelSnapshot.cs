@@ -22,21 +22,6 @@ namespace ProductApp.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("OrderEntityProductEntity", b =>
-                {
-                    b.Property<int>("OrdersId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OrdersId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("OrderEntityProductEntity");
-                });
-
             modelBuilder.Entity("ProductApp.Models.Entities.CustomerEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -85,13 +70,34 @@ namespace ProductApp.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("ProductApp.Models.Entities.ProductEntity", b =>
+            modelBuilder.Entity("ProductApp.Models.Entities.OrderRowsEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderRows");
+                });
+
+            modelBuilder.Entity("ProductApp.Models.Entities.ProductEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -105,21 +111,6 @@ namespace ProductApp.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("OrderEntityProductEntity", b =>
-                {
-                    b.HasOne("ProductApp.Models.Entities.OrderEntity", null)
-                        .WithMany()
-                        .HasForeignKey("OrdersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProductApp.Models.Entities.ProductEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ProductApp.Models.Entities.OrderEntity", b =>
                 {
                     b.HasOne("ProductApp.Models.Entities.CustomerEntity", "Customers")
@@ -129,6 +120,25 @@ namespace ProductApp.Migrations
                         .IsRequired();
 
                     b.Navigation("Customers");
+                });
+
+            modelBuilder.Entity("ProductApp.Models.Entities.OrderRowsEntity", b =>
+                {
+                    b.HasOne("ProductApp.Models.Entities.OrderEntity", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProductApp.Models.Entities.ProductEntity", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ProductApp.Models.Entities.CustomerEntity", b =>

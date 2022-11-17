@@ -1,4 +1,5 @@
-﻿using ProductApp.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using ProductApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,11 +33,19 @@ namespace ProductAppWpf.Pages
         {
             using var client = new HttpClient();
 
-            await client.PostAsJsonAsync("https://localhost:7040/api/customers", new CustomerRequest
+            var result = await client.PostAsJsonAsync("https://localhost:7040/api/Customer", new CustomerRequest
             {
                 Name = tb_customerName.Text,
             });
-            tb_customerName.Text = string.Empty;
+            if (result is OkResult)
+            {
+                tb_customerName.Text = "";
+            }
+            else
+            {
+                MessageBox.Show("Not saved");
+                tb_customerName.Text = "";
+            }
         }
     }
 }
