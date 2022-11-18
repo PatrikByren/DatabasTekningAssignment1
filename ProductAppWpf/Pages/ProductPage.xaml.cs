@@ -1,6 +1,9 @@
-﻿using ProductApp.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
+using ProductApp.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -23,9 +26,12 @@ namespace ProductAppWpf.Pages
     /// </summary>
     public partial class ProductPage : Page
     {
+
+        private ObservableCollection<ProductModel> _productEntity = new();
         public ProductPage()
         {
             InitializeComponent();
+            PopulateProductCombobox().ConfigureAwait(false);
         }
         private async void btn_product_save_Click(object sender, RoutedEventArgs e)
         {
@@ -37,6 +43,37 @@ namespace ProductAppWpf.Pages
             });
             tb_productName.Text = string.Empty;
             tb_productPrice.Text = string.Empty;
+            PopulateProductCombobox();
+        }
+        public async Task PopulateProductCombobox()
+        {
+            var collection = new ObservableCollection<KeyValuePair<Guid, string>>();
+            using var client = new HttpClient();
+
+            foreach (var item in await client.GetFromJsonAsync<IEnumerable<ProductModel>>("https://localhost:7040/api/products"))
+            {  /*_productEntity.Add(new ProductModel { Id = item.Id, Name = item.Name, Price = item.Price });*/
+            collection.Add(new KeyValuePair<Guid, string>(item.Id, item.Name)); }
+
+            cb_changeProduct.ItemsSource = collection;
+
+        }
+
+        private async void btn_saveProductChange_Click(object sender, RoutedEventArgs e)
+        {
+            var product = (KeyValuePair<Guid, string>)cb_changeProduct.SelectedItem;
+            var productId = product.Key;
+            using var client = new HttpClient();
+            var result = await client.PutAsJsonAsync("https://localhost:7040/api/products", new ProductModel
+            {
+                Id = productId,
+                Name = tb_changeName.Text,
+                Price = decimal.Parse(tb_changePrice.Text)
+            });
+            if (result is OkResult) { }
+            tb_changeName.Text = string.Empty;
+            tb_changePrice.Text = string.Empty;
+            PopulateProductCombobox();
+
         }
     }
 }

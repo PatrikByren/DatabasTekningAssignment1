@@ -82,15 +82,12 @@ namespace ProductApp.Controllers
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
             return new BadRequestResult();
         }
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateProductAsync(int id, ProductModel productModel)
+        [HttpPut]
+        public async Task<ActionResult> UpdateProductAsync(ProductModel productModel)
         {
             try
             {
-                //if (id != productModel.Id)
-                //    return new BadRequestResult();
-
-                var productEntity = await _context.Products.FindAsync(id);
+                var productEntity = await _context.Products.FindAsync(productModel.Id);
                 if (productEntity != null)
                 {
                     productEntity.Name = productModel.Name;
