@@ -71,7 +71,7 @@ namespace ProductAppWpf.Pages
             if (result is OkResult) { }
             tb_changeName.Text = string.Empty;
             tb_changePrice.Text = string.Empty;
-            cb_changeProduct.SelectedIndex = default;
+            cb_changeProduct.SelectedIndex = -1;
             PopulateProductCombobox();
         }
 

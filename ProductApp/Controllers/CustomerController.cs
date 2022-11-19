@@ -33,11 +33,6 @@ namespace ProductApp.Controllers
                 await _context.SaveChangesAsync();
 
                 return new OkResult();
-                //    (new CustomerEntity
-                //{
-                //    Id = customerEntity.Id,
-                //    Name = customerEntity.Name,
-                //});
             }
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
             return new BadRequestResult();

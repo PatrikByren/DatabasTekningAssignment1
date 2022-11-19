@@ -41,15 +41,13 @@ namespace ProductAppWpf.Pages
                 {
                     Name = tb_customerName.Text,
                 });
-                if (result is OkResult)
-                {
-                    tb_customerName.Text = "";
-                }
-                else
+                if (result is BadRequestResult)
                 {
                     MessageBox.Show("Not saved");
-                    tb_customerName.Text = "";
                 }
+                tb_customerName.Text = "";
+                PopulateCustomerCombobox();
+
             }
             catch { MessageBox.Show("Error! Try again!"); }
         }
@@ -81,7 +79,7 @@ namespace ProductAppWpf.Pages
             }
             catch { MessageBox.Show("Error! Try again!"); }
             tb_changeName.Text = string.Empty;
-            cb_changeCustomer.SelectedIndex = default;
+            cb_changeCustomer.SelectedIndex = -1;
             PopulateCustomerCombobox();
         }
 
