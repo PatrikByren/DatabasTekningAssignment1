@@ -79,58 +79,25 @@ namespace ProductApp.Controllers
             catch (Exception ex) { Debug.WriteLine(ex.Message); }
             return new BadRequestResult();
         }
-        //[HttpGet]
-        //public async Task<ActionResult> GetAllCustomersAsync()
-        //{
-        //    return new OkObjectResult(await _customerService.GetAllCustomersAsync());
-        //}
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult> GetOneCustomerAsync(int id)
-        //{
-        //    //var result = await _customerService.GetOneCustomerAsync(id);
-        //    //if (result == null)
-        //    //{ return new BadRequestResult(); }
-        //    //return new OkObjectResult(result);
-        //}
-        //[HttpPut("{id}")]
-        //public async Task<ActionResult> UpdateCustomerAsync(int id, CustomerModel customersModel)
-        //{
+        [HttpPut]
+        public async Task<ActionResult> UpdateCustomerAsync(CustomerModel customerModel)
+        {
+            try
+            {
+                var customerEntity = await _context.Customers.FindAsync(customerModel.Id);
+                if (customerEntity != null)
+                { 
+                    customerEntity.Name = customerModel.Name;
+                    _context.Entry(customerEntity).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
 
-
-
-        //    //try
-        //    //{
-        //    //    if (id != customersModel.Id)
-        //    //        return new BadRequestResult();
-
-        //    //    var customerEntity = await _context.Customers.FindAsync(id);
-        //    //    if (customerEntity != null)
-        //    //    {
-        //    //        customerEntity.Name = customersModel.Name;
-        //    //        _context.Entry(customerEntity).State = EntityState.Modified;
-        //    //        await _context.SaveChangesAsync();
-
-        //    //        return new OkResult();
-        //    //    }
-        //    //    return new NotFoundResult();
-        //    //}
-        //    //catch (Exception ex) { Debug.WriteLine(ex.Message); }
-        //    //return new BadRequestResult();
-        //}
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult> DeleteCustomerAsync(int id)
-        //{
-        //    try
-        //    {
-        //        var customerEntity = await _context.Customers.FindAsync(id);
-        //        if (customerEntity == null)
-        //            return new NotFoundResult();
-        //        _context.Customers.Remove(customerEntity);
-        //        await _context.SaveChangesAsync();
-        //        return new OkResult();
-        //    }
-        //    catch (Exception ex) { Debug.WriteLine(ex.Message); }
-        //    return new BadRequestResult();
-        //}
+                    return new OkResult();
+                }
+                return new NotFoundResult();
+            }
+            catch (Exception ex) { Debug.WriteLine(ex.Message); }
+            return new BadRequestResult();
+        }
+   
     }
 }

@@ -51,8 +51,7 @@ namespace ProductAppWpf.Pages
             using var client = new HttpClient();
 
             foreach (var item in await client.GetFromJsonAsync<IEnumerable<ProductModel>>("https://localhost:7040/api/products"))
-            {  /*_productEntity.Add(new ProductModel { Id = item.Id, Name = item.Name, Price = item.Price });*/
-            collection.Add(new KeyValuePair<Guid, string>(item.Id, item.Name)); }
+            collection.Add(new KeyValuePair<Guid, string>(item.Id, item.Name)); 
 
             cb_changeProduct.ItemsSource = collection;
 
@@ -72,8 +71,34 @@ namespace ProductAppWpf.Pages
             if (result is OkResult) { }
             tb_changeName.Text = string.Empty;
             tb_changePrice.Text = string.Empty;
+            cb_changeProduct.SelectedIndex = default;
             PopulateProductCombobox();
+        }
 
+        private async void cb_changeProduct_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                if (cb_changeProduct.SelectedIndex != -1)
+                {
+                    var product = (KeyValuePair<Guid, string>)cb_changeProduct.SelectedItem;
+                    var productId = product.Key;
+                    List<ProductModel> products = new();
+                    using var client = new HttpClient();
+                    products.Add(await client.GetFromJsonAsync<ProductModel>($"https://localhost:7040/api/products/{productId}"));
+                    var customerName = (KeyValuePair<Guid, string>)cb_changeProduct.SelectedItem;
+                    tb_changeName.Text = customerName.Value;
+                    foreach (var item in products)
+                    {
+                        tb_changePrice.Text = Convert.ToString(item.Price);
+                    }
+                    
+                }
+            }
+            catch
+            {
+
+            }
         }
     }
 }

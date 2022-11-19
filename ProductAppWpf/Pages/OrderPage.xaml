@@ -18,10 +18,10 @@
             <StackPanel>
                 <TextBlock Text="Products" Margin="20 0"/>
                 <ComboBox Name="cb_product" DisplayMemberPath="Value" Margin="20 0"/>
-                <Button x:Name="btn_addProductToCart" Content="Add to chart" Click="btn_addProductToCart_Click" Margin="20"/>
+                <Button x:Name="btn_addProductToCart"  Background="Wheat" Content="Add to chart" Click="btn_addProductToCart_Click" Margin="20"/>
                 <TextBlock Text="Customers" Margin="20 0"/>
                 <ComboBox Name="cb_customer" DisplayMemberPath="Value" Margin="20 0"/>
-                <Button x:Name="btn_makeOrder" Content="Make Order" Click="btn_makeOrder_Click" Margin="20"/>
+                <Button x:Name="btn_makeOrder" Background="Wheat" Content="Make Order" Click="btn_makeOrder_Click" Margin="20"/>
                 <TextBlock Text="Cart:" Margin="20 0"/>
                 <ListView x:Name="lvProducts" MaxHeight="180" HorizontalContentAlignment="Stretch" Margin="20 0">
                     <ListView.ItemTemplate>
@@ -35,13 +35,16 @@
                                     <TextBlock Text="{Binding Name}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                                    <Button x:Name="btnDelete" FontFamily="Segoe MDL2 Assets" HorizontalAlignment="Right" Content="&#xE74D;" />
+                                    <TextBlock Text="{Binding Price}"/>
                                 </StackPanel>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-
+                <StackPanel Grid.Column="1" Margin="20 0 0 0" Orientation="Horizontal">
+                    <TextBlock Text="Totalt pris:" FontSize="8" />
+                    <TextBlock x:Name="tbl_totalPrice" FontSize="8" Text="" Margin="5 0 0 0"/>
+                </StackPanel>
             </StackPanel>
         </Grid>
 

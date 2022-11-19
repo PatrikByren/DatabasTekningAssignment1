@@ -16,18 +16,18 @@
 
         <Grid Grid.Column="0" Margin="20">
             <StackPanel>
-                <TextBlock Text="Produktens namn" Margin="0 0 0 5" />
-                <TextBox Name="tb_productName" Padding="3" Margin="0 0 0 10" />
-                <TextBlock Text="Produktens pris" Margin="0 0 0 5" />
-                <TextBox Name="tb_productPrice" Padding="3" Margin="0 0 0 10" />
-                <Button Name="btn_product_save" Click="btn_product_save_Click" Content="Spara nya produkten" Padding="3" />
-                <TextBlock Text="Välj product du vill ändra" Margin="0 40 0 10"/>
-                <ComboBox Name="cb_changeProduct" DisplayMemberPath="Value" />
-                <TextBlock Text="Namn" Margin="0 10 0 0"/>
-                <TextBox x:Name="tb_changeName" Margin="0 10 0 10"/>
-                <TextBlock Text="Price"/>
+                <TextBlock Text="Produktens namn" Margin="0 5 0 0" />
+                <TextBox Name="tb_productName" Margin="0 0 0 10" />
+                <TextBlock Text="Produktens pris" />
+                <TextBox Name="tb_productPrice" />
+                <Button Name="btn_product_save" Background="Wheat" Click="btn_product_save_Click" Content="Spara nya produkten" Margin="0 10 0 0"/>
+                <TextBlock Text="Välj product du vill ändra" Margin="0 40 0 0"/>
+                <ComboBox Name="cb_changeProduct" DisplayMemberPath="Value" SelectionChanged="cb_changeProduct_SelectionChanged" />
+                <TextBlock Text="Nytt namn" Margin="0 10 0 0"/>
+                <TextBox x:Name="tb_changeName" Margin="0 0 0 10"/>
+                <TextBlock Text="Nytt pris"/>
                 <TextBox x:Name="tb_changePrice" Margin="0 0 0 10"/>
-                <Button x:Name="btn_saveProductChange" Content="Spara ändring" Click="btn_saveProductChange_Click"/>
+                <Button x:Name="btn_saveProductChange" Content="Spara ändring" Background="Wheat" Click="btn_saveProductChange_Click"/>
             </StackPanel>
         </Grid>
 

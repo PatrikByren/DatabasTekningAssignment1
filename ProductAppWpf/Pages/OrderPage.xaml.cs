@@ -31,7 +31,7 @@ namespace ProductAppWpf.Pages
     public partial class OrderPage : Page
     {
         private ObservableCollection<ProductModel> _productModel = new();
-        private ObservableCollection<ProductModel> _productEntity = new();
+        decimal totalPrice;
 
         public OrderPage()
         {
@@ -59,23 +59,29 @@ namespace ProductAppWpf.Pages
                 c_collection.Add(new KeyValuePair<int, string>(c.Id, c.Name));
 
             cb_customer.ItemsSource = c_collection;
-             
         }
 
-        private void btn_addProductToCart_Click(object sender, RoutedEventArgs e)
+        private async void btn_addProductToCart_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 var product = (KeyValuePair<Guid, string>)cb_product.SelectedItem;
                 var productId = product.Key;
                 var productValue = product.Value;
-                _productModel.Add(new ProductModel { Id = productId, Name = productValue });
-                cb_product.SelectedItem = null!;
+                using var client = new HttpClient();
+                _productModel.Add(await client.GetFromJsonAsync<ProductModel>($"https://localhost:7040/api/products/{productId}"));
+                totalPrice = 0;
+                foreach (var item in _productModel)
+                {
+                    totalPrice += item.Price;
+                }
                 lvProducts.ItemsSource = _productModel;
+                tbl_totalPrice.Text = totalPrice.ToString();
+                cb_product.SelectedIndex = -1;
+
 
             }
             catch { MessageBox.Show("No products choosen in chart"); }
-
         }
 
         private async void btn_makeOrder_Click(object sender, RoutedEventArgs e)
@@ -84,46 +90,31 @@ namespace ProductAppWpf.Pages
                 try
                 {
                     ICollection<ProductModel> productEntities = lvProducts.ItemsSource as ICollection<ProductModel>;
-                    decimal totalPrice = 0;
                     var customer = (KeyValuePair<int, string>)cb_customer.SelectedItem;
                     var customerId = customer.Key;
                     using var client = new HttpClient();
-
-                    foreach (var item in _productModel)
-                    {
-                        _productEntity.Add(await client.GetFromJsonAsync<ProductModel>($"https://localhost:7040/api/products/{item.Id}"));
-                    }
-                    foreach (var item in _productEntity)
-                    {
-                        totalPrice += item.Price;
-                    }
-
 
                     var order = new OrderRequest
                     {
                         CustomersId = customer.Key,
                         CustomerName = customer.Value,
                         Products = productEntities,
-                        TotalPrice = totalPrice
+                        TotalPrice = decimal.Parse(tbl_totalPrice.Text)
                     };
-                    var json = JsonConvert.SerializeObject(order);
-
                     var result = await client.PostAsJsonAsync("https://localhost:7040/api/Order", order);
-                    if (result is OkResult)
+                    _productModel = new();
+                    lvProducts.ItemsSource = _productModel;
+                    cb_customer.SelectedIndex = -1;
+                    cb_product.SelectedIndex = -1;
+                    tbl_totalPrice.Text = String.Empty;
+                    if (result is BadRequestResult)
                     {
-                        cb_customer.SelectedItem = null!;
-                        cb_product.SelectedItem = null!;
-                        //MessageBox.Show("Saved");
-                    }
-                    else
-                    {
-                        cb_customer.SelectedItem = null!;
-                        cb_product.SelectedItem = null!;
-                        //MessageBox.Show("Not Saved");
+                        MessageBox.Show("Error!");
                     }
                 }
                 catch (Exception ex) { Debug.WriteLine(ex.Message); MessageBox.Show("Error!"); }
             }
         }
+
     }
 }
